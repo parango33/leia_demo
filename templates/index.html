@@ -1,0 +1,58 @@
+<!-- templates/index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>LeyIA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css" />
+    <div class="spinner-container" id="spinner-container" style="display: none;">
+        <i id="loading-spinner" class="fas fa-spinner fa-spin"></i>
+    </div>
+</head>
+<body>
+    <div class="container">
+        <h1>Creador de Documentos LeyIA</h1>
+        <form id="name-form">
+            <input type="text" id="cliente" name="cliente" placeholder="Ingrese nombre del cliente">
+            <input type="text" id="abogado" name="abogado" placeholder="Ingrese nombre del abogado">
+            <input type="text" id="objetivo_doc" name="objetivo_doc" placeholder="Ingrese el objetivo del documento">
+            <input type="text" id="tipo_doc" name="tipo_doc" placeholder="Ingrese el tipo de documento">
+
+            <button id="magic-button" type="submit">Generar Documento</button>
+        </form>
+        <div id="result">
+            <h2>Resumen</h2>
+            <p id="summary"></p>
+            <h2>Documento</h2>
+            <div id="generated_document"></div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            $('#name-form').on('submit', function (e) {
+                e.preventDefault();
+                $('#spinner-container').show();
+                $.ajax({
+                    url: '/process',
+                    data: $('#name-form').serialize(),
+                    type: 'POST',
+                    success: function (response) {
+                        $('#summary').text(response.summary);
+                        $('#generated_document').text(response.generated_document);
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    },
+                    complete: function () {
+                        $('#spinner-container').hide();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
